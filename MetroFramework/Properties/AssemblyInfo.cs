@@ -91,21 +91,21 @@ namespace MetroFramework
 
         // Design
 
-        internal const string MetroFrameworkDesign_ = "MetroFramework.Design";
+        internal const string MetroFrameworkDesign_ = "MetroFramework.Design.NetCore";
 
-        internal const string MetroFrameworkDesignSN = "MetroFramework.Design, Version=" + MetroFrameworkAssembly.Version
+        internal const string MetroFrameworkDesignSN = "MetroFramework.Design.NetCore, Version=" + MetroFrameworkAssembly.Version
                                                        + ", Culture=neutral, PublicKeyToken=" + MetroFrameworkKeyToken;
 
-        internal const string MetroFrameworkDesignIVT = "MetroFramework.Design, PublicKey=" + MetroFrameworkKeyFull;
+        internal const string MetroFrameworkDesignIVT = "MetroFramework.Design.NetCore";
 
         // Fonts
 
-        internal const string MetroFrameworkFonts_ = "MetroFramework.Fonts";
+        internal const string MetroFrameworkFonts_ = "MetroFramework.Fonts.NetCore";
 
-        internal const string MetroFrameworkFontsSN = "MetroFramework.Fonts, Version=" + MetroFrameworkAssembly.Version
+        internal const string MetroFrameworkFontsSN = "MetroFramework.Fonts.NetCore, Version=" + MetroFrameworkAssembly.Version
                                                       + ", Culture=neutral, PublicKeyToken=" + MetroFrameworkKeyToken;
 
-        internal const string MetroFrameworkFontsIVT = "MetroFramework.Fonts, PublicKey=" + MetroFrameworkKeyFull;
+        internal const string MetroFrameworkFontsIVT = "MetroFramework.Fonts.NetCore";
 
         internal const string MetroFrameworkFontResolver = "MetroFramework.Fonts.FontResolver, " + MetroFrameworkFontsSN;
 

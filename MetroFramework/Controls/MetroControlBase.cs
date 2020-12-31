@@ -30,9 +30,9 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         GENERATED FILE - DO NOT EDIT
 
  **************************************************************************************/
- 
- 
- 
+
+
+
 
 using System;
 using System.Diagnostics;
@@ -50,73 +50,73 @@ namespace MetroFramework.Controls
 {
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroControlBase : Control, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroControlBase : Control,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroControlBase()
+        protected MetroControlBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -138,137 +138,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "Control"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "Control"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -296,11 +305,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -328,16 +337,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine(string.Format(string.Format("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh))); 
+                Debug.WriteLine(string.Format(string.Format("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height))); 
+                Debug.WriteLine(string.Format(string.Format("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height))); 
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine(string.Format(string.Format("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height))); 
+            }
         }
 
 #endif
@@ -345,73 +354,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroButtonBase : Button, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroButtonBase : Button,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroButtonBase()
+        protected MetroButtonBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -433,137 +442,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "Button"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "Button"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -591,11 +609,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -623,16 +641,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -640,73 +658,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroCheckBoxBase : CheckBox, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroCheckBoxBase : CheckBox,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroCheckBoxBase()
+        protected MetroCheckBoxBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -728,137 +746,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "CheckBox"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "CheckBox"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -886,11 +913,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -918,16 +945,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -935,73 +962,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroComboBoxBase : ComboBox, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroComboBoxBase : ComboBox,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroComboBoxBase()
+        protected MetroComboBoxBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -1023,137 +1050,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "ComboBox"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "ComboBox"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -1181,11 +1217,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -1213,16 +1249,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -1230,77 +1266,77 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroFormBase : Form, IMetroContainerControl, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroFormBase : Form, IMetroContainerControl,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroFormBase()
+        protected MetroFormBase()
         {
-			Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+            Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
-			////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			//Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
+            ////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            //Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -1322,48 +1358,51 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-	    /// <summary>
+
+        /// <summary>
         ///     A style manager controlling this container and all child controls.
         /// </summary>
         /// <remarks>
@@ -1374,97 +1413,103 @@ namespace MetroFramework.Controls
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public MetroStyleManager StyleManager { get; set; }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "Form"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "Form"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -1492,11 +1537,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -1524,16 +1569,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -1541,73 +1586,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroLabelBase : Label, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroLabelBase : Label,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroLabelBase()
+        protected MetroLabelBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -1629,137 +1674,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "Label"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "Label"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -1787,11 +1841,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -1819,16 +1873,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -1836,77 +1890,77 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroPanelBase : Panel, IMetroContainerControl, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroPanelBase : Panel, IMetroContainerControl,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroPanelBase()
+        protected MetroPanelBase()
         {
-			Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+            Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
-			////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			//Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
+            ////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            //Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -1928,48 +1982,51 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-	    /// <summary>
+
+        /// <summary>
         ///     A style manager controlling this container and all child controls.
         /// </summary>
         /// <remarks>
@@ -1980,97 +2037,103 @@ namespace MetroFramework.Controls
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public MetroStyleManager StyleManager { get; set; }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "Panel"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "Panel"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -2098,11 +2161,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -2130,16 +2193,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -2147,73 +2210,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroProgressBarBase : ProgressBar, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroProgressBarBase : ProgressBar,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroProgressBarBase()
+        protected MetroProgressBarBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -2235,137 +2298,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "ProgressBar"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "ProgressBar"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -2393,11 +2465,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -2425,16 +2497,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -2442,73 +2514,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroRadioButtonBase : RadioButton, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroRadioButtonBase : RadioButton,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroRadioButtonBase()
+        protected MetroRadioButtonBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -2530,137 +2602,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "RadioButton"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "RadioButton"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -2688,11 +2769,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -2720,16 +2801,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -2737,73 +2818,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroTabControlBase : TabControl, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroTabControlBase : TabControl,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroTabControlBase()
+        protected MetroTabControlBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -2825,137 +2906,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "TabControl"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "TabControl"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -2983,11 +3073,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -3015,16 +3105,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -3032,77 +3122,77 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroTabPageBase : TabPage, IMetroContainerControl, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroTabPageBase : TabPage, IMetroContainerControl,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroTabPageBase()
+        protected MetroTabPageBase()
         {
-			Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+            Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
-			////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			//Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
+            ////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            //Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -3124,48 +3214,51 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-	    /// <summary>
+
+        /// <summary>
         ///     A style manager controlling this container and all child controls.
         /// </summary>
         /// <remarks>
@@ -3176,97 +3269,103 @@ namespace MetroFramework.Controls
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public MetroStyleManager StyleManager { get; set; }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "TabPage"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "TabPage"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -3294,11 +3393,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -3326,16 +3425,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -3343,73 +3442,73 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroTextBoxBase : TextBox, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroTextBoxBase : TextBox,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroTextBoxBase()
+        protected MetroTextBoxBase()
         {
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -3431,137 +3530,146 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "TextBox"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "TextBox"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -3589,11 +3697,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -3621,16 +3729,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -3638,77 +3746,77 @@ namespace MetroFramework.Controls
     }
 
 
-	[EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class MetroUserControlBase : UserControl, IMetroContainerControl, 
-		IMetroControl, IMetroStyledComponent
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public abstract class MetroUserControlBase : UserControl, IMetroContainerControl,
+        IMetroControl, IMetroStyledComponent
     {
 
-		/**************************************************************************************
+        /**************************************************************************************
 									GENERATED FILE - DO NOT EDIT
 		 **************************************************************************************/
 
-		#region Fields, Constructor & IDisposable
+        #region Fields, Constructor & IDisposable
 
-		private readonly MetroStyleManager _styleManager;
+        private readonly MetroStyleManager _styleManager;
 
-	    protected MetroUserControlBase()
+        protected MetroUserControlBase()
         {
-			Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+            Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
             _styleManager = new MetroStyleManager();
             _styleManager.MetroStyleChanged += NotifyMetroStyleChanged;
         }
 
 #if DEBUG
-		private bool _controlWasPainted;
+        private bool _controlWasPainted;
 #endif
-                   
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing) 
-			{
+            if (disposing)
+            {
 #if DEBUG
-				Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
+                Debug.WriteLineIf(!_controlWasPainted, GetType().Name + ": never received OnPaint() event.");
 #endif
-				_styleManager.Dispose();
-			}
+                _styleManager.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-		#endregion
+        #endregion
 
-		[Browsable(false)]
-		public event PaintEventHandler UserPaint;
+        [Browsable(false)]
+        public event PaintEventHandler UserPaint;
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-#if DEBUG			
-			_controlWasPainted = true;
-			////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
-			//Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
+        protected override void OnPaint(PaintEventArgs e)
+        {
+#if DEBUG
+            _controlWasPainted = true;
+            ////Debug.Assert(GetStyle(ControlStyles.ContainerControl));
+            //Debug.Assert(!GetStyle(ControlStyles.AllPaintingInWmPaint));
 #endif
-			try
-			{
-				//Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
-				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
-				OnPaintForeground(e);
-				if(GetStyle(ControlStyles.UserPaint))
-				{
-					var ev = UserPaint;
-					if(ev!=null) ev(this, e);
-				}
-			}
-			catch(Exception ex)
-			{
-				Trace.WriteLine(ex);
-				Invalidate();
-			}
-		}
+            try
+            {
+                //Debug.WriteLine(Name + ": OnPaint: " + e.ClipRectangle);
+                if (GetStyle(ControlStyles.AllPaintingInWmPaint)) OnPaintBackground(e);
+                OnPaintForeground(e);
+                if (GetStyle(ControlStyles.UserPaint))
+                {
+                    var ev = UserPaint;
+                    if (ev != null) ev(this, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                Invalidate();
+            }
+        }
 
-		protected virtual void OnPaintForeground(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-		}
+        protected virtual void OnPaintForeground(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
 
         #region Style Manager Interface
 
@@ -3730,48 +3838,51 @@ namespace MetroFramework.Controls
                 OnMetroStyleChanged(e);
         }
 
-		protected virtual void OnMetroStyleChanged(EventArgs e)
-		{
-			_effectiveFont = GetThemeFont();
-			Invalidate();
-		}
+        protected virtual void OnMetroStyleChanged(EventArgs e)
+        {
+            _effectiveFont = GetThemeFont();
+            Invalidate();
+        }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-			OnMetroStyleChanged(e);
+            OnMetroStyleChanged(e);
         }
 
         // Override Site property to set the style manager into design mode, too.
         public override ISite Site
         {
-            get { return base.Site; } set { base.Site = _styleManager.Site = value; }
+            get { return base.Site; }
+            set { base.Site = _styleManager.Site = value; }
         }
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Theme
 #pragma warning restore 109
         {
-            get { return _styleManager.Theme; } set { _styleManager.Theme = value; /* no need to Invalidate() here */}
+            get { return _styleManager.Theme; }
+            set { _styleManager.Theme = value; /* no need to Invalidate() here */}
         }
 
-		[DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
+        [DefaultValue(MetroStyleManager.AMBIENT_VALUE)]
         [Category(MetroDefaults.CatAppearance)]
 #pragma warning disable 109
         public new string Style
 #pragma warning restore 109
         {
-            get { return _styleManager.Style; } set { _styleManager.Style = value; /* no need to Invalidate() here */ }
+            get { return _styleManager.Style; }
+            set { _styleManager.Style = value; /* no need to Invalidate() here */ }
         }
 
-	
-	    /// <summary>
+
+        /// <summary>
         ///     A style manager controlling this container and all child controls.
         /// </summary>
         /// <remarks>
@@ -3782,97 +3893,103 @@ namespace MetroFramework.Controls
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public MetroStyleManager StyleManager { get; set; }
 
-	
-		#endregion
 
-		protected virtual string MetroControlCategory { get { return "UserControl"; } }
+        #endregion
 
-		protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
+        protected virtual string MetroControlCategory { get { return "UserControl"; } }
 
-		protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null) 
-		{
-			return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
+        protected virtual string MetroControlState { get { return Enabled ? "Normal" : "Disabled"; } }
 
-		protected virtual Color GetStyleColor()
-		{
-			return _styleManager.GetStyleColor();
-		}
-
-		private Color _backColor = Color.Empty;
-		protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
-		private new void ResetBackColor() { _backColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color BackColor 
-		{ 
-			get { return _backColor; } set { _backColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-
-	    protected Color BaseBackColor 
-		{
-			get { return base.BackColor; } set { base.BackColor = value; } 
-		}
-
-		[Browsable(false)]
-		public virtual Color EffectiveBackColor 
-		{ 
-			get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); } 
-		}
-
-		private Color _foreColor = Color.Empty;
-		protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
-		private new void ResetForeColor() { _foreColor = Color.Empty; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Color ForeColor 
-		{ 
-			get { return _foreColor; } set { _foreColor = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    protected Color BaseForeColor 
-		{ 
-			get { return base.ForeColor; } set { base.ForeColor = value; } 
-		}
-		[Browsable(false)]
-		public virtual Color EffectiveForeColor 
-		{ 
-			get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); } 
-		}
-
-		protected virtual Color GetThemeColor(string property, string state = null, string category = null)
-		{
-			return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
-		}
-
-		private Font _font;
-		protected bool ShouldSerializeFont() { return _font != null; }
-		private new void ResetFont() { _font = null; }
-
-	    [Category(MetroDefaults.CatAppearance)]
-	    public new Font Font 
-		{ 
-			get { return _font; } set { _font = value; OnMetroStyleChanged( new EventArgs() ); } 
-		}
-	    
-		protected Font BaseFont 
-		{ 
-			get { return base.Font; } set { base.Font = value; } 
-		}
-		
-		private Font _effectiveFont;
-		protected virtual Font EffectiveFont 
-		{ 
-			get { return _effectiveFont; } 
-		}
-
-        protected virtual Font GetThemeFont( string category = null)
+        protected virtual bool TryGetThemeProperty<T>(string property, out T value, string state = null, string category = null)
         {
-			return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
-		}
+            return _styleManager.TryGetThemeProperty(property, out value, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        protected virtual Color GetStyleColor()
+        {
+            return _styleManager.GetStyleColor();
+        }
+
+        private Color _backColor = Color.Empty;
+        protected bool ShouldSerializeBackColor() { return !_backColor.IsEmpty; }
+        private new void ResetBackColor() { _backColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color BackColor
+        {
+            get { return _backColor; }
+            set { _backColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Color BaseBackColor
+        {
+            get { return base.BackColor; }
+            set { base.BackColor = value; }
+        }
+
+        [Browsable(false)]
+        public virtual Color EffectiveBackColor
+        {
+            get { return ShouldSerializeBackColor() ? _backColor : GetThemeColor("BackColor"); }
+        }
+
+        private Color _foreColor = Color.Empty;
+        protected bool ShouldSerializeForeColor() { return !_foreColor.IsEmpty; }
+        private new void ResetForeColor() { _foreColor = Color.Empty; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+        protected Color BaseForeColor
+        {
+            get { return base.ForeColor; }
+            set { base.ForeColor = value; }
+        }
+        [Browsable(false)]
+        public virtual Color EffectiveForeColor
+        {
+            get { return ShouldSerializeForeColor() ? _foreColor : GetThemeColor("ForeColor"); }
+        }
+
+        protected virtual Color GetThemeColor(string property, string state = null, string category = null)
+        {
+            return _styleManager.GetThemeColor(property, state ?? MetroControlState, category ?? MetroControlCategory);
+        }
+
+        private Font _font;
+        protected bool ShouldSerializeFont() { return _font != null; }
+        private new void ResetFont() { _font = null; }
+
+        [Category(MetroDefaults.CatAppearance)]
+        public new Font Font
+        {
+            get { return _font; }
+            set { _font = value; OnMetroStyleChanged(new EventArgs()); }
+        }
+
+        protected Font BaseFont
+        {
+            get { return base.Font; }
+            set { base.Font = value; }
+        }
+
+        private Font _effectiveFont;
+        protected virtual Font EffectiveFont
+        {
+            get { return _effectiveFont; }
+        }
+
+        protected virtual Font GetThemeFont(string category = null)
+        {
+            return ShouldSerializeFont() ? Font : GetThemeFont(MetroFontSize.Default, MetroFontWeight.Default, category);
+        }
 
         protected Font GetThemeFont(MetroFontSize size, MetroFontWeight weight, string category = null)
         {
-            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size) )
+            if (size == MetroFontSize.Default && !TryGetThemeProperty("MetroFontSize", out size))
                 size = MetroDefaults.MetroFontSize;
 
             if (weight == MetroFontWeight.Default && !TryGetThemeProperty("MetroFontWeight", out weight))
@@ -3900,11 +4017,11 @@ namespace MetroFramework.Controls
             switch (m.Msg)
             {
                 //case WinApi.Messages.WM_CTLCOLORBTN:
-                    //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORBTN", GetType().Name);
+                //break;
                 //case WinApi.Messages.WM_CTLCOLORSTATIC:
-                    //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
-                    //break;
+                //Debug.WriteLine("WM_CTLCOLORSTATIC", GetType().Name);
+                //break;
                 case WinApi.Messages.WM_CTLCOLOREDIT:
                     Debug.WriteLine("WM_CTLCOLOREDIT", GetType().Name);
                     break;
@@ -3932,16 +4049,16 @@ namespace MetroFramework.Controls
             //    width = Width;
             //    height = Height;
             //}
-			int xx = Left, yy = Top, ww = Width, hh = Height;
+            int xx = Left, yy = Top, ww = Width, hh = Height;
             base.SetBoundsCore(x, y, width, height, specified);
-			if( specified == BoundsSpecified.None && ( ww != Width || hh != Height ) && ( width == 0 || height == 0 ))
-			{
-				Debug.WriteLine("{0}::Pre(x={1} y={2} width={3} height={4}", Name, xx, yy, ww, hh); 
-				Debug.WriteLine("{0}::Set(x={1} y={2} width={3} height={4}", Name, x, y, width, height); 
-				Debug.WriteLine("{0}::Post(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-				base.SetBoundsCore(x, y, ww, hh, specified);
-				Debug.WriteLine("{0}::Fix(x={1} y={2} width={3} height={4}", Name, Left, Top, Width, Height); 
-			}
+            if (specified == BoundsSpecified.None && (ww != Width || hh != Height) && (width == 0 || height == 0))
+            {
+                Debug.WriteLine($"{Name}::Pre(x={xx} y={yy} width={ww} height={hh}");
+                Debug.WriteLine($"{Name}::Set(x={x} y={y} width={width} height={height}");
+                Debug.WriteLine($"{Name}::Post(x={Left} y={Top} width={Width} height={Height}");
+                base.SetBoundsCore(x, y, ww, hh, specified);
+                Debug.WriteLine($"{Name}::Fix(x={Left} y={Top} width={Width} height={Height}");
+            }
         }
 
 #endif
@@ -3950,4 +4067,4 @@ namespace MetroFramework.Controls
 
 
 }
- 
+

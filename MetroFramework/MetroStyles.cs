@@ -25,8 +25,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #endregion
 
-using System.Threading.Tasks;
-using System.Diagnostics.Contracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
