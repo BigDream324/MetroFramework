@@ -3,18 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework.NetCore", "MetroFramework\MetroFramework.NetCore.csproj", "{BB41AC8B-CBED-4387-A7E0-4567EDB3F57F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework", "MetroFramework\MetroFramework.csproj", "{BB41AC8B-CBED-4387-A7E0-4567EDB3F57F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework.Demo.NetCore", "MetroFramework.Demo\MetroFramework.Demo.NetCore.csproj", "{AF988819-4618-4852-9506-C1D06D04F6B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework.Demo", "MetroFramework.Demo\MetroFramework.Demo.csproj", "{AF988819-4618-4852-9506-C1D06D04F6B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework.Design.NetCore", "MetroFramework.Design\MetroFramework.Design.NetCore.csproj", "{7316584D-9A16-4280-A8AB-6D45198C6E4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework.Design", "MetroFramework.Design\MetroFramework.Design.csproj", "{7316584D-9A16-4280-A8AB-6D45198C6E4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework.Fonts.NetCore", "MetroFramework.Fonts\MetroFramework.Fonts.NetCore.csproj", "{5A2FCAE8-C2FA-41BD-90EA-16103EA07B26}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9472558C-C8E2-45A4-B5B2-223A0AC3614B}"
-	ProjectSection(SolutionItems) = preProject
-		LICENSE.md = LICENSE.md
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetroFramework.Fonts", "MetroFramework.Fonts\MetroFramework.Fonts.csproj", "{5A2FCAE8-C2FA-41BD-90EA-16103EA07B26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

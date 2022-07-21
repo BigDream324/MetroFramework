@@ -22,14 +22,15 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-using System;
-using MetroFramework.Components;
-
 namespace MetroFramework.Interfaces
 {
-    public interface IMetroComponent : IDisposable // IMetroStyledComponent
+    using MetroFramework.Components;
+
+    public interface IMetroComponent
     {
-        //MetroColorStyle Style { get; set; }
-        //MetroThemeStyle Theme { get; set; }
+        MetroColorStyle Style { get; set; }
+        MetroThemeStyle Theme { get; set; }
+
+        MetroStyleManager StyleManager { get; set; }
     }
 }

@@ -21,11 +21,16 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-using MetroFramework.Components;
 
 namespace MetroFramework.Interfaces
 {
-    public interface IMetroForm : IMetroContainerControl, IMetroStyledComponent
+    using MetroFramework.Components;
+
+    public interface IMetroForm
     {
+        MetroColorStyle Style { get; set; }
+        MetroThemeStyle Theme { get; set; }
+
+        MetroStyleManager StyleManager { get; set; }
     }
 }

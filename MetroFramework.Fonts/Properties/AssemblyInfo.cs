@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle(MetroFrameworkDesignAssembly.Title)]
+//[assembly: AssemblyTitle(MetroFrameworkDesignAssembly.Title)]
 [assembly: AssemblyDescription(MetroFrameworkDesignAssembly.Description)]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(MetroFrameworkDesignAssembly.Company)]
-[assembly: AssemblyProduct(MetroFrameworkDesignAssembly.Product)]
+//[assembly: AssemblyConfiguration("")]
+//[assembly: AssemblyCompany(MetroFrameworkDesignAssembly.Company)]
+//[assembly: AssemblyProduct(MetroFrameworkDesignAssembly.Product)]
 [assembly: AssemblyCopyright(MetroFrameworkDesignAssembly.Copyright)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -36,13 +36,12 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(MetroFrameworkDesignAssembly.Version)]
-[assembly: AssemblyFileVersion(MetroFrameworkDesignAssembly.Version)]
+//[assembly: AssemblyVersion(MetroFrameworkDesignAssembly.Version)]
+//[assembly: AssemblyFileVersion(MetroFrameworkDesignAssembly.Version)]
 
 internal static class MetroFrameworkDesignAssembly
 {
     internal const string Title = "MetroFramework.Fonts.dll";
-    // JT: Use same information as main MetroFramework.dll
     internal const string Version = MetroFrameworkAssembly.Version;
     internal const string Description = MetroFrameworkAssembly.Description;
     internal const string Copyright = MetroFrameworkAssembly.Copyright;

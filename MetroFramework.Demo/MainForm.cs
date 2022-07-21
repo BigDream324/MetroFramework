@@ -1,77 +1,97 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
-using System.Threading;
-using System.Linq;
 using System.Windows.Forms;
-using MetroFramework.Components;
+
 using MetroFramework.Forms;
+using System.Data;
 
 namespace MetroFramework.Demo
 {
-
     public partial class MainForm : MetroForm
     {
         public MainForm()
         {
             InitializeComponent();
+
+            DataTable _table = new DataTable();
+            _table.ReadXml(Application.StartupPath + @"\Data\Books.xml");
+            metroGrid1.DataSource = _table;
+
+            metroGrid1.Font = new Font("Segoe UI", 11f, FontStyle.Regular, GraphicsUnit.Pixel);
+            metroGrid1.AllowUserToAddRows = false;
+
         }
 
         private void metroTileSwitch_Click(object sender, EventArgs e)
         {
-            metroTileSwitch.TileCount++;
-            Random rng = new Random();
-            var styles = MetroStyleManager.Styles.Styles.Keys;
-            while (true)
-            {
-                string newStyle = styles.ElementAt(rng.Next(styles.Count));
-                if (newStyle == metroStyleManager.Style) continue;
-                metroStyleManager.Style = newStyle;
-                return;
-            }
+            var m = new Random();
+            int next = m.Next(0, 13);
+            metroStyleManager.Style = (MetroColorStyle)next;
         }
 
         private void metroTile1_Click(object sender, EventArgs e)
         {
-            metroTile1.TileCount++;
-            var rng = new Random();
-            var themes = MetroStyleManager.Styles.Themes.Keys;
-            while (true)
-            {
-                string newTheme = themes.ElementAt(rng.Next(themes.Count));
-                if( newTheme == metroStyleManager.Theme) continue;
-                metroStyleManager.Theme = newTheme;
-                return;
-            }
+            metroStyleManager.Theme = metroStyleManager.Theme == MetroThemeStyle.Light ? MetroThemeStyle.Dark : MetroThemeStyle.Light;
         }
 
-        // I'm deliberately NOT using a Forms timer to have callbacks from the "wrong" thread
-        private System.Threading.Timer timer;
-
-        private void EnsureTimer()
+        private void metroButton1_Click(object sender, EventArgs e)
         {
-             if(timer != null ) return;
-            timer = new System.Threading.Timer(RandomizeGlobalStyles);
+            MetroTaskWindow.ShowTaskWindow(this,"SubControl in TaskWindow", new TaskWindowControl(), 10);
         }
 
-        private void RandomizeGlobalStyles(object state)
+        private void metroButton2_Click(object sender, EventArgs e)
         {
-            Random rng = new Random();
-
-            var themes = MetroStyleManager.Styles.Themes.Keys;
-            MetroStyleManager.Default.Theme = themes.ElementAt(rng.Next(themes.Count));
-
-            var styles = MetroStyleManager.Styles.Styles.Keys;
-            MetroStyleManager.Default.Style = styles.ElementAt(rng.Next(styles.Count));
+            MetroMessageBox.Show(this, "Do you like this metro message box?", "Metro Title", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Asterisk);
         }
 
-
-        private void metroToggle4_CheckedChanged(object sender, EventArgs e)
+        private void metroButton5_Click(object sender, EventArgs e)
         {
-            EnsureTimer();
-            long interval = metroToggle4.Checked ? 5000 : -1;
-            timer.Change(0, interval);
+            metroContextMenu1.Show(metroButton5, new Point(0, metroButton5.Height));
         }
 
+        private void metroButton6_Click(object sender, EventArgs e)
+        {
+            MetroMessageBox.Show(this, "This is a sample MetroMessagebox `OK` only button", "MetroMessagebox", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void metroButton10_Click(object sender, EventArgs e)
+        {
+            MetroMessageBox.Show(this, "This is a sample MetroMessagebox `OK` and `Cancel` button", "MetroMessagebox", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+        }
+
+        private void metroButton7_Click(object sender, EventArgs e)
+        {
+            MetroMessageBox.Show(this, "This is a sample MetroMessagebox `Yes` and `No` button", "MetroMessagebox", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        }
+
+        private void metroButton8_Click(object sender, EventArgs e)
+        {
+            MetroMessageBox.Show(this, "This is a sample MetroMessagebox `Yes`, `No` and `Cancel` button", "MetroMessagebox", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+        }
+
+        private void metroButton11_Click(object sender, EventArgs e)
+        {
+            MetroMessageBox.Show(this, "This is a sample MetroMessagebox `Retry` and `Cancel` button.  With warning style.", "MetroMessagebox", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+        }
+
+        private void metroButton9_Click(object sender, EventArgs e)
+        {
+            MetroMessageBox.Show(this, "This is a sample MetroMessagebox `Abort`, `Retry` and `Ignore` button.  With Error style.", "MetroMessagebox", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
+        }
+
+        private void metroButton12_Click(object sender, EventArgs e)
+        {
+            MetroMessageBox.Show(this, "This is a sample `default` MetroMessagebox ", "MetroMessagebox");
+        }
+
+        private void metroButton4_Click(object sender, EventArgs e)
+        {
+            metroTextBox2.Focus();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e) {
+
+        }
     }
 }

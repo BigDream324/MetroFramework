@@ -22,21 +22,28 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace MetroFramework.Interfaces
 {
-    public interface IMetroControl :  IMetroComponent
+    using System;
+    using System.Windows.Forms;
+
+    using MetroFramework.Drawing;
+    using MetroFramework.Components;
+
+    public interface IMetroControl
     {
-        Color EffectiveBackColor { get; }
-        Color EffectiveForeColor { get; }
+        event EventHandler<MetroPaintEventArgs> CustomPaintBackground;
+        event EventHandler<MetroPaintEventArgs> CustomPaint;
+        event EventHandler<MetroPaintEventArgs> CustomPaintForeground;
 
-        event PaintEventHandler UserPaint;
+        MetroColorStyle Style { get; set; }
+        MetroThemeStyle Theme { get; set; }
+
+        MetroStyleManager StyleManager { get; set; }
+
+        bool UseCustomBackColor { get; set; }
+        bool UseCustomForeColor { get; set; }
+        bool UseStyleColors { get; set; }
+        bool UseSelectable { get; set; }
     }
-
-    //public interface IMetroAmbientOverride : IMetroControl
-    //{
-        
-    //}
 }
